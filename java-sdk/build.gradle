@@ -1,0 +1,58 @@
+group "io.mitter"
+version "${rootProject.version}"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.1'
+    }
+
+    ext {
+        packageVersions = [
+            feign: '10.0.1',
+            feignForm: '3.4.0'
+        ]
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(AbstractArchiveTask) {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+dependencies {
+    compile project(':models')
+    compile project(':named-entities')
+
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlinVersion
+
+    compile group: 'io.github.openfeign', name: 'feign-core', version: "${packageVersions.feign}"
+    compile group: 'io.github.openfeign', name: 'feign-jackson', version: "${packageVersions.feign}"
+    compile group: 'io.github.openfeign', name: 'feign-okhttp', version: "${packageVersions.feign}"
+    compile group: 'io.github.microutils', name: 'kotlin-logging', version: '1.4.1'
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+}

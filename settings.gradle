@@ -1,0 +1,4 @@
+rootProject.name = 'mittter-artifacts'
+include 'named-entities'
+include 'models'
+include 'java-sdk'

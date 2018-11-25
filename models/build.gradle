@@ -1,0 +1,68 @@
+group 'io.mitter'
+version "${rootProject.version}"
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+    compile project(":named-entities")
+
+    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+    compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '7.6.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: rootProject.jacksonVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: rootProject.jacksonVersion
+    compile group: 'io.swagger', name: 'swagger-core', version: '1.5.18'
+
+    compile group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: kotlinVersion
+    compile group: 'io.github.microutils', name: 'kotlin-logging', version: '1.4.1'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test:1.4.0.RELEASE')
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'mitter.io java models',
+                'Implementation-Version': version
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+tasks.withType(AbstractArchiveTask) {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+uploadArchives {
+    repositories {
+        flatDir {
+            dirs 'repos'
+        }
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+
+            pom {
+                packaging 'jar'
+            }
+        }
+    }
+}
